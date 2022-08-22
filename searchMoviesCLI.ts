@@ -14,7 +14,7 @@ async function searchForMovies(){
 
 async function handleSearch(searchTerm : string){
     while (searchTerm !== 'q'){
-        const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE LOWER(name) LIKE $1 AND kind = 'movie' ORDER BY date DESC LIMIT 10"
+        const text = "SELECT id, name, TO_CHAR(movies.date, 'dd Mon, yyyy') AS date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE LOWER(name) LIKE $1 AND kind = 'movie' ORDER BY date DESC LIMIT 10"
         const values = [`%${searchTerm}%`]
 
         const results = await client.query(text, values)
@@ -54,7 +54,7 @@ function findMovieDetails(index : string, results : QueryResult<any>): [string, 
 async function showFavourites(){
     //TO DO: edit query so that it shows the same information that you get from searching
         //This will probably use a JOIN
-    const results = await client.query('SELECT DISTINCT movies.id, movies.name, movies.date, movies.runtime, movies.budget, movies.revenue, movies.vote_average, movies.votes_count FROM movies JOIN favourites ON movies.id = favourites.movie_id')
+    const results = await client.query("SELECT DISTINCT movies.id, movies.name,  TO_CHAR(movies.date, 'dd Mon, yyyy') AS date, movies.runtime, movies.budget, movies.revenue, movies.vote_average, movies.votes_count FROM movies JOIN favourites ON movies.id = favourites.movie_id")
     console.table(results.rows)
 }
 
